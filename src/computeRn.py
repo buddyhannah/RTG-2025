@@ -1,5 +1,5 @@
 import sympy as sp
-from sympy import ImmutableMatrix
+from sympy import ImmutableMatrix, Matrix, I, symbols, Eq, solve
 from functools import reduce
 import os
 
@@ -22,7 +22,7 @@ def get_data_file_path(filename):
 
 
 '''
-    Writes output to to the console and file
+    Writes output to the console and file
     
     Input:
         text: Text to output
@@ -146,6 +146,12 @@ def compute_R_n(R, n, verbose=False, output_path=None):
 '''
 def simplify_matrix(mat, basis):
 
+    # Check if the matrix is the zero matrix
+    zero_mat = sp.zeros(*mat.shape)
+    if mat == zero_mat:
+        return "zero matrix"
+
+
     # Convert matrix-label dictionary to list of matrices
     basis_list = list(basis)
 
@@ -183,23 +189,79 @@ def simplify_matrix(mat, basis):
         for c, val in non_zero.items():
             b = basis_list[coeffs.index(c)]
             b_str = basis[b]
-            terms.append(f"{c}*{b_str}")
+            terms.append(f"{val}*{b_str}")
         return " + ".join(terms)
     
     # No solution, return none
     return None
 
 
-
 def main():
-    
+
+    A = ImmutableMatrix([[0, 0, 0, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]])  
+    R = {A: 'A'}
+    n = 5
+    compute_R_n(R, n, verbose=True)
+
+    I = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])  
+    A = ImmutableMatrix([[0, 1, 0], [1, 0, 0], [0, 0, 0]]) 
+    B = ImmutableMatrix([[0, -1*sp.I, 0], [sp.I, 0, 0], [0, 0, 0]])   
+    R = {I: 'I', A: 'A', B: 'B'}
+    n = 3
+    compute_R_n(R, n, verbose=True)
+
+    A = ImmutableMatrix([[0, 1, 0], [1, 0, 0], [0, 0, 0]])  
+    I = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])  
+    R = {I: 'I', A: 'A'}
+    n = 3
+    compute_R_n(R, n, verbose=True)
+
+
+    I = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])  
+    A = ImmutableMatrix([[1,0,0], [0,-1, 0], [0,0, 0]])
+    omega = -sp.Rational(1, 2) - sp.Rational(1, 2) * sp.sqrt(3) * sp.I
+    B = ImmutableMatrix([[0, 1-omega,1-omega**2],[1-omega**2,0,1-omega],[1-omega,1-omega**2,0]])
+    R = {I: 'I', A: 'A', B: 'B'}
+    n = 3
+    compute_R_n(R, n, verbose=True)
+        
+    A = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) 
+    B = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 2]]) 
+    R = {A: 'A', B:'B'}
+    n = 2
+    compute_R_n(R, n, verbose=True)
+        
+
+    B = ImmutableMatrix([[0, 1, 0], [1, 0, 0], [0, 0, 0]])  
+    C = ImmutableMatrix([[0, 0, 0], [0, 0, 1], [1, 0, 0]])  
+    R = {B: 'B', C:'C'}
+    n = 2
+    compute_R_n(R, n, verbose=True)
+        
+
+
+    A = ImmutableMatrix([[1, 0, 0], [0, -1, 0], [0, 0, 0]])  
+    B = ImmutableMatrix([[0, 0, 1], [0, 0, 0], [1, 0, 0]])  
+    C = ImmutableMatrix([[0, 0, 0], [0, 0, 1], [0, 1, 0]]) 
+    R = {A: 'A', B: 'B', C: 'C'}
+    n = 2
+    compute_R_n(R, n, verbose=True)
+                
+
+    A = ImmutableMatrix([[0, 1, 0], [1, 0, 0], [0, 0, 0]]) 
+    B = ImmutableMatrix([[0, 0, 1], [0, 0, 0], [1, 0, 0]])  
+    C = ImmutableMatrix([[0, 0, 0], [0, 0, 1], [0, 1, 0]]) 
+    R = {A: 'A', B: 'B', C: 'C'}
+    n = 2
+    compute_R_n(R, n, verbose=True)
+
+
     I = ImmutableMatrix([[1, 0], [0, 1]])  # Identity
     A = ImmutableMatrix([[0, 1], [1, 0]])  # X
     B = ImmutableMatrix([[0, 0], [0, 2]]) 
     R = {I: 'I', A: 'A', B: 'B'}
     n = 3
-    compute_R_n(R, n, verbose=True, output_path=get_data_file_path("R_n_ex.txt"))
-    
+    compute_R_n(R, n, verbose=True)
 
     
     I = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])  # Identity
@@ -213,6 +275,7 @@ def main():
     R = {I: 'I', A_tilda: 'Ã', B_tilda: 'B̃'}
     n = 3
     compute_R_n(R, n, verbose=True, output_path=get_data_file_path("R_n_computation.txt"))
+
 
 if __name__ == "__main__":
     main()
