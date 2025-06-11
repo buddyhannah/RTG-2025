@@ -1,5 +1,5 @@
 import sympy as sp
-from sympy import ImmutableMatrix, Matrix, I, symbols, Eq, solve
+from sympy import ImmutableMatrix
 from functools import reduce
 import os
 
@@ -111,6 +111,12 @@ def compute_R_n(R, n, verbose=False, output_path=None):
                         if verbose:
                             write_output("New matrix", verbose, output_file)
 
+        
+            # Stop is last spanning set equals current spanning set
+            if not new_span:
+                write_output(f"\nSTABILIZED: R^{step} = R^{step+1} = ...", True, output_file)
+                break
+
             current_span = new_span
         
         # Final spanning set
@@ -198,6 +204,41 @@ def simplify_matrix(mat, basis):
 
 def main():
 
+
+    I = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) 
+    A = ImmutableMatrix([[0, -1*sp.I, 0], [sp.I, 0, 0], [0, 0, 0]]) 
+    B = ImmutableMatrix([[0, 0, -1*sp.I], [0, 0, 0], [sp.I, 0, 0]]) 
+    C = ImmutableMatrix([[0, 0, 0], [0, 0, -1*sp.I], [0, sp.I, 0]]) 
+    R = {I:'I', B:'B', C:'C'}
+    n = 5
+    compute_R_n(R, n, verbose=True)
+
+
+    I = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) 
+    A = ImmutableMatrix([[0, 1, 0], [1, 0, 0], [0, 0, 0]]) 
+    B = ImmutableMatrix([[0, 0, 0], [0, 0, 1], [0, 1, 0]]) 
+    C = ImmutableMatrix([[0, 0, 1], [0, 0, 0], [1, 0, 0]]) 
+    R = {I:'I', A: 'A', B:'B', C:'C'}
+    n = 2
+    compute_R_n(R, n, verbose=True)
+
+
+
+    I = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) 
+    A = ImmutableMatrix([[0, -1*sp.I, 0], [sp.I, 0, 0], [0, 0, 0]]) 
+    B = ImmutableMatrix([[0, 0, 0], [0, 0, 1], [0, 1, 0]]) 
+    C = ImmutableMatrix([[0, 0, 1], [0, 0, 0], [1, 0, 0]]) 
+    R = {I:'I', A: 'A', B:'B', C:'C'}
+    n = 1
+    compute_R_n(R, n, verbose=True)
+
+
+    A = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) 
+    B = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 2]]) 
+    R = {A: 'A', B:'B'}
+    n = 2
+    compute_R_n(R, n, verbose=True)
+        
     A = ImmutableMatrix([[0, 0, 0, 0], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]])  
     R = {A: 'A'}
     n = 5
@@ -223,12 +264,6 @@ def main():
     B = ImmutableMatrix([[0, 1-omega,1-omega**2],[1-omega**2,0,1-omega],[1-omega,1-omega**2,0]])
     R = {I: 'I', A: 'A', B: 'B'}
     n = 3
-    compute_R_n(R, n, verbose=True)
-        
-    A = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) 
-    B = ImmutableMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 2]]) 
-    R = {A: 'A', B:'B'}
-    n = 2
     compute_R_n(R, n, verbose=True)
         
 
